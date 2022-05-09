@@ -62,7 +62,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>openal32.lib;opengl32.lib;winmm.lib;gdi32.lib;freetype.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-main-d.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;kernel32.lib;user32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\SFML\lib;$(SolutionDir)</AdditionalLibraryDirectories>
@@ -92,18 +92,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Sources/Main.cpp" />
-    <ClCompile Include="Sources\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\background.png" />
     <Image Include="Resources\doodle1.png" />
     <Image Include="Resources\doodle2.png" />
     <Image Include="Resources\platform.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Sources\Defines.h" />
-    <ClInclude Include="Sources\Objects.h" />
-    <ClInclude Include="Sources\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
