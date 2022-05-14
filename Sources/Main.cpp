@@ -1,108 +1,151 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <time.h>
+
 using namespace sf;
 using namespace std;
 
+int const GridWidth = 30;
+int const GridHeight = 20;
+int Pixel = 16;
+int Width = Pixel * GridWidth;
+int Height = Pixel * GridHeight;
+int Direction;
+int Length = 3;
 
-//Grid
-const int A = 8;
-const int B = 8;
-int grid[A][B]{ 0 };
-int sgrid[A][B]{ 0 };
-bool checkA[A];
-bool checkB[B];
+class Cords
+{
+public:
+    int x, y;
+};
+class Snake :public Cords
+{
+}  Snake[GridWidth * GridHeight];
 
+struct Food :public Cords
+{
+} Food;
+
+
+void Tick()
+{
+    //MovementSlithering
+    for (int i = Length; i > 0; --i)
+    {
+        Snake[i].x = Snake[i - 1].x; Snake[i].y = Snake[i - 1].y;
+    }
+    cout << Direction << endl;
+
+    //MovementChangeDirection
+    if (Direction == 0) Snake[0].y += 1;
+    if (Direction == 1) Snake[0].x -= 1;
+    if (Direction == 2) Snake[0].x += 1;
+    if (Direction == 3) Snake[0].y -= 1;
+
+    //SnakeGrow/FoodSpawn
+    if ((Snake[0].x == Food.x) && (Snake[0].y == Food.y))
+    {
+        Length++; Food.x = rand() % GridWidth; Food.y = rand() % GridHeight;
+    }
+
+    //BorderCheck //FixHitBox
+    if (Snake[0].x > GridWidth) cout << "Game Over" << endl;  if (Snake[0].x < 0) cout << "Game Over" << endl;
+    if (Snake[0].y > GridHeight) cout << "Game Over" << endl; if (Snake[0].y < 0) cout << "Game Over" << endl;
+
+    //Ouroboros
+    for (int i = 1; i < Length; i++)
+        if (Snake[0].x == Snake[i].x && Snake[0].y == Snake[i].y)  cout << "Game Over" << endl;
+}
 
 int main()
 {
-	//Window
-	RenderWindow app(VideoMode(480, 852), "Puzzle");
+    //Seed
+    srand(time(0));
 
-	//Textures/Sprite
-	int p = 32; // Text p x p
-	int offx = 112;
-	int offy = 298;
-	Texture t;
-	t.loadFromFile("Resources/placehold.jpg");
-	Sprite s(t);
+    //Window
+    RenderWindow window(VideoMode(Width, Height), "Snake Game!");
 
-	for (int i = 0; i < A; i++ )
-		for (int j = 0; j < B; j++)
-		{
-			sgrid[i][j] = 0;
-		}
+    //LoadTextures
+    Texture t1, t2, t3;
+    t1.loadFromFile("Resources/white.png");
+    t2.loadFromFile("Resources/red.png");
+    t3.loadFromFile("Resources/green.png");
+    Sprite sprite1(t1);
+    Sprite sprite2(t2);
+    Sprite sprite3(t3);
 
-	while (app.isOpen())
-	{
-		//Mouse
-		Vector2i pos = Mouse::getPosition(app);
-		int x = (pos.x - offx) / p;
-		int y = (pos.y - offy) / p;
+    //TimerSettings
+    Clock clock;
+    float timer = 0, delay = 0.1;
 
-		Event e;
-		while (app.pollEvent(e))
-		{
-			if (e.type == Event::Closed)
-				app.close(); 
+    //FirstSpawnPosition
+    Snake[0].x = GridWidth / 3;
+    Snake[0].y = GridHeight / 3;
+    Food.x = GridWidth / 2;
+    Food.y = GridHeight / 2;
 
-			if (e.type == Event::MouseButtonPressed)
-				if (e.key.code == Mouse::Left) { sgrid[x][y] = 10; grid[y][x] = 1;}
+    while (window.isOpen())
+    {
+        //Time
+        float time = clock.getElapsedTime().asSeconds();
+        clock.restart();
+        timer += time;
 
-			if (e.type == Event::KeyPressed)
-				if (e.key.code == Keyboard::D) 
-				{
-					cout << std::endl;
-					for (int i = 0; i < A; i++)
-					{
-						for (int j = 0; j < B; j++)
-						{
-							cout << grid[i][j] << ' ';
-						}
-						cout << std::endl;
-					}
-				}	
-		}
+        Event e;
+        while (window.pollEvent(e))
+        {
+            if (e.type == Event::Closed)
+                window.close();
+        }
 
-		//Check
-		for (int i = 0; i < A; i++)
-			for (int j = 0; j < B; j++)
-			{
-				if (grid[i][j] == 0) { checkA[i] = false; continue;}
-				else { checkA[i] = true; }
-			}
-		for (int j = 0; j < B; j++)
-			for (int i = 0; i < A; i++)
-			{
-				if (grid[i][j] == 0) { checkB[j] = false; continue; }
-				else { checkB[j] = true; }
-			}
-		//Delete
-		for (int i = 0; i < A; i++)
-			if (checkA[i] == true)
-				for (int j = 0; j < B; j++)
-				{
-					sgrid[j][i] = 0;
-					grid[i][j] = 0;
-				}
-		for (int j = 0; j < B; j++)
-			if (checkB[j] == true)
-				for (int i = 0; i < A; i++)
-				{
-					sgrid[j][i] = 0;
-					grid[i][j] = 0;
-				}
-			
-		app.clear(Color::White);
-		for (int i = 0; i < A; i++)
-			for (int j = 0; j < B; j++)
-			{
-				
-				s.setTextureRect(IntRect(sgrid[i][j] * p, 0, p, p));
-				s.setPosition(offx + i * p, offy + j * p);
-				app.draw(s);
-			}
-		app.display();
-	}
-	return (0);
+        //MovementDirections
+        if (Direction != 2)
+            if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
+                Direction = 1;
+        if (Direction != 1)
+            if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
+                Direction = 2;
+        if (Direction != 0)
+            if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
+                Direction = 3;
+        if (Direction != 3)
+            if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
+                Direction = 0;
+
+        //CheckDelay
+        if (timer > delay) { timer = 0; Tick(); }
+
+        window.clear();
+
+        //DrawGrid
+        for (int i = 0; i < GridWidth; i++)
+            for (int j = 0; j < GridHeight; j++)
+            {
+                sprite1.setPosition(i * Pixel, j * Pixel);  window.draw(sprite1);
+            }
+
+        //DrawSnake
+        for (int i = 0; i < Length; i++)
+        {
+            sprite2.setPosition(Snake[i].x * Pixel, Snake[i].y * Pixel);  window.draw(sprite2);
+        }
+
+        //DrawFood
+        sprite3.setPosition(Food.x * Pixel, Food.y * Pixel);  window.draw(sprite3);
+
+        window.display();
+    }
+
+    return 0;
 }
+//Add Menu
+//Add Pause
+//Add GameOver
+//Add Sound
+//Rewrite
+ 
+//Add Original sprites
+//Add Game modes
+//Add Custom game mode "Food Placer" based on the old project 
+//Add Highscore system
+//Add OSD for current game mode + highscore.
