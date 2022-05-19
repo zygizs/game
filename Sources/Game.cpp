@@ -1,7 +1,5 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
 #include <fstream>
-#include <time.h>
+#include <iostream>
 
 #include "Variables.h"
 
@@ -20,79 +18,82 @@ struct Food :public Cords
 {
 } Food;
 
-//class Score
-//{
-//protected:
-//    int CurScore;
-//    int StoredScore[3];
-//    
-//public:
-//    Score(){}
-//    ~Score() {}
-//    void Read()
-//    {
-//        ifstream Score;
-//        Score.open("ScoreStorage.txt");
-//        for (int i = 0; i < 4; i++)
-//            Score >> StoredScore[i];
-//    }
-//    void Write()
-//    {
-//        ofstream Score;
-//        Score.open("ScoreStorage.txt");
-//        for (int i = 0; i < 4; i++)
-//            Score << StoredScore[i];
-//    }
-//    void CountCur()
-//    {
-//        CurScore = Length - 3;
-//    }
-//    int GetCur
-//    {
-//        return CurScore;
-//    }
-//};
-//class Slug :public Score
-//{
-//public:
-//    void SlugCount()
-//    {
-//        StoredScore[0] = 25 * CurScore
-//    }
-//};
-//class Worm :public Score
-//{
-//public:
-//    void WormCount()
-//    {
-//        StoredScore[1] = 50 * CurScore
-//    }
-//};
-//class Python :public Score
-//{
-//public:
-//    void PythonCount()
-//    {
-//        StoredScore[2] = 75 * CurScore
-//    }
-//};
-
-void GameSettings()
+class Score
 {
-    //Seed
-    srand(time(0));
+protected:
+    int CurScore;
+    int StoredScore[3];
 
-
-    //FirstSpawnPosition
-    for (int i = 0; i < Length; i++)
+public:
+    Score() {}
+    ~Score() {}
+    void Read()
     {
-        Snake[i].x = GridWidth / 3 - i;
-        Snake[i].y = GridHeight / 3;
+        ifstream ScoreStorage("ScoreStorage.txt");
+        for (int i = 0; i < 3; i++)
+        {
+            ScoreStorage >> StoredScore[i];
+            cout << StoredScore[i];
+        }
     }
-    Food.x = GridWidth / 2;
-    Food.y = GridHeight / 2;
+    void Write()
+    {
+        ofstream ScoreStorage("ScoreStorage.txt");
+        for (int i = 0; i < 3; i++)
+        {
+            ScoreStorage << StoredScore[i] << " ";
+            cout << StoredScore[i];
+        }     
+    }
+    int GetCur()
+    {
+        return CurScore;
+    }
+};
+class Slug :public Score
+{
+public:
+    void SlugScore()
+    {
+        CurScore = 25 * (Length - DefaultLength);
+        if (CurScore > StoredScore[0])
+            StoredScore[0] = CurScore;
+    }
+    int SlugTop()
+    {
+        return StoredScore[0];
+    }
+};
+class Worm :public Score
+{
+public:
+    void WormScore()
+    {
+        CurScore = 50 * (Length - DefaultLength);
+        if (CurScore > StoredScore[1])
+            StoredScore[1] = CurScore;
+    }
+    int WormTop()
+    {
+        return StoredScore[1];
+    }
+};
+class Python :public Score
+{
+public:
+    void PythonScore()
+    {
+        CurScore = 75 * (Length - DefaultLength);
+        if (CurScore > StoredScore[2])
+            StoredScore[2] = CurScore;
+    }
+    int PythonTop()
+    {
+        return StoredScore[2];
+    }
+};
 
-}
+
 
 
 void Tick()
@@ -105,8 +106,8 @@ void Tick()
     cout << Direction << endl;
 
     //MovementChangeDirection
-    if (Direction == 0) Snake[0].y += 1;
-    if (Direction == 1) Snake[0].x -= 1;
+    if (Direction == 0) Snake[0].x -= 1;
+    if (Direction == 1) Snake[0].y += 1;
     if (Direction == 2) Snake[0].x += 1;
     if (Direction == 3) Snake[0].y -= 1;
 
@@ -116,11 +117,11 @@ void Tick()
         Length++; Food.x = rand() % GridWidth; Food.y = rand() % GridHeight;
     }
 
-    //BorderCheck //FixHitBox
-    if (Snake[0].x > GridWidth) { cout << "Game Over" << endl; Pause = true; }  if (Snake[0].x < 0) { cout << "Game Over" << endl; Pause = true; }
-    if (Snake[0].y > GridHeight) { cout << "Game Over" << endl; Pause = true; }  if (Snake[0].y < 0) { cout << "Game Over" << endl; Pause = true; }
+    //BorderCheck
+    if (Snake[0].x > GridWidth - 1) { cout << "A" << endl; State = 3; }  if (Snake[0].x < 0) { cout << "C" << endl; State = 3; }
+    if (Snake[0].y > GridHeight - 1) { cout << "B" << endl; State = 3; }  if (Snake[0].y < 0) { cout << "D" << endl; State = 3; }
 
     //Ouroboros
     for (int i = 1; i < Length; i++)
-        if (Snake[0].x == Snake[i].x && Snake[0].y == Snake[i].y) { cout << "Game Over" << endl; Pause = true; }
+        if (Snake[0].x == Snake[i].x && Snake[0].y == Snake[i].y) { cout << "Game Over" << endl; State = 3; }
 }

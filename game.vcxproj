@@ -91,13 +91,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Sources/Main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="Resources\background.png" />
     <Image Include="Resources\doodle1.png" />
     <Image Include="Resources\doodle2.png" />
     <Image Include="Resources\platform.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
