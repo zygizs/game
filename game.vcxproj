@@ -97,7 +97,11 @@
     <Image Include="Resources\platform.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Game.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Header.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
