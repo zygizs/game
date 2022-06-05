@@ -7,7 +7,152 @@
 using namespace sf;
 using namespace std;
 
-void Tick(SnakeC Snake[], FoodS Food, int& Direction, int& Length, int& State)
+//
+//Draw
+//
+void DrawMenu(RenderWindow& window, Font& F1, float& Delay, int& Choice, int& Direction, int& State)
+{
+
+    Text Snake;
+    Snake.setFont(F1);
+    Snake.setCharacterSize((GridWidth + GridHeight) * 1.55);
+    Snake.setFillColor(Color(40, 42, 48));
+    Snake.setStyle(Text::Bold);
+    Snake.setString("Snake");
+    Snake.setPosition(Width / 3, Height / 8);
+
+    Text Slug;
+    Slug.setFont(F1);
+    Slug.setCharacterSize((GridWidth + GridHeight) * 0.65);
+    Slug.setFillColor(Color(40, 42, 48));
+    Slug.setStyle(Text::Bold);
+    Slug.setString("  W\nSlug");
+    Slug.setPosition(Width / 2.25, Height / 1.65);
+
+    Text Worm;
+    Worm.setFont(F1);
+    Worm.setCharacterSize((GridWidth + GridHeight) * 0.65);
+    Worm.setFillColor(Color(40, 42, 48));
+    Worm.setStyle(Text::Bold);
+    Worm.setString("   A\nWorm");
+    Worm.setPosition(Width / 4.5, Height / 1.15);
+
+    Text Python;
+    Python.setFont(F1);
+    Python.setCharacterSize((GridWidth + GridHeight) * 0.65);
+    Python.setFillColor(Color(40, 42, 48));
+    Python.setStyle(Text::Bold);
+    Python.setString("   D\nPython");
+    Python.setPosition(Width / 1.65, Height / 1.15);
+
+    Text Exit;
+    Exit.setFont(F1);
+    Exit.setCharacterSize((GridWidth + GridHeight) * 0.65);
+    Exit.setFillColor(Color(40, 42, 48));
+    Exit.setStyle(Text::Bold);
+    Exit.setString("  S\nExit");
+    Exit.setPosition(Width / 2.25, Height / 1.15);
+
+    window.draw(Snake);
+    window.draw(Slug);
+    window.draw(Worm);
+    window.draw(Python);
+    window.draw(Exit);
+
+    if (State != 1)
+    {
+        if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W)) {
+            Delay = 0.15; Choice = 1; Direction = 3; State = 1;
+        }
+        else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A)) {
+            Delay = 0.10; Choice = 2; Direction = 0; State = 1;
+        }
+        else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D)) {
+            Delay = 0.05; Choice = 3; Direction = 2; State = 1;
+        }
+        else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
+            window.close();
+    }
+}
+
+void DrawOSD(RenderWindow& window, Font& F1, Slug& Sl, Worm& Wo, Python& Py, int& Choice)
+{
+
+    Text CurrentScore;
+    CurrentScore.setFont(F1);
+    CurrentScore.setCharacterSize(GridWidth + GridHeight);
+    CurrentScore.setFillColor(Color(40, 42, 48));
+    CurrentScore.setStyle(Text::Bold);
+    CurrentScore.setPosition(!Width, Height);
+    if (Choice == 1) { CurrentScore.setString(to_string(Sl.GetCur())); }
+    else if (Choice == 2) { CurrentScore.setString(to_string(Wo.GetCur())); }
+    else if (Choice == 3) { CurrentScore.setString(to_string(Py.GetCur())); }
+
+    Text TopScore;
+    TopScore.setFont(F1);
+    TopScore.setCharacterSize(GridWidth + GridHeight);
+    TopScore.setFillColor(Color(40, 42, 48));
+    TopScore.setStyle(Text::Bold);
+    TopScore.setPosition(Width - (GridWidth + GridHeight) * 2, Height);
+    if (Choice == 1) { TopScore.setString(to_string(Sl.SlugTop())); }
+    else if (Choice == 2) { TopScore.setString(to_string(Wo.WormTop())); }
+    else if (Choice == 3) { TopScore.setString(to_string(Py.PythonTop())); }
+
+    Text GameMode;
+    GameMode.setFont(F1);
+    GameMode.setCharacterSize(GridWidth + GridHeight);
+    GameMode.setFillColor(Color(40, 42, 48));
+    GameMode.setStyle(Text::Bold);
+    GameMode.setPosition(Width / 2.5, Height);
+    if (Choice == 1) { GameMode.setString("Slug"); }
+    else if (Choice == 2) { GameMode.setString("Worm"); }
+    else if (Choice == 3) { GameMode.setString("Python"); }
+
+
+    sf::RectangleShape Line(sf::Vector2f(300, 300));
+
+    Line.setSize(sf::Vector2f(Width, 4));
+    Line.setPosition(sf::Vector2f(0, Height));
+    Line.setFillColor(Color(40, 42, 48));
+
+    window.draw(CurrentScore);
+    window.draw(TopScore);
+    window.draw(GameMode);
+    window.draw(Line);
+}
+
+void DrawGameOver(RenderWindow& window, Font& F1)
+{
+    Text GameOver;
+    GameOver.setFont(F1);
+    GameOver.setCharacterSize(GridWidth + GridHeight);
+    GameOver.setFillColor(Color::Red);
+    GameOver.setStyle(Text::Bold);
+    GameOver.setString("Game\nOver");
+    GameOver.setPosition(Width / 2.55, Height / 3);
+    window.draw(GameOver);
+}
+
+void DrawGame(RenderWindow& window, Sprite& S1, Sprite& S2, Sprite& S3, SnakeC Snake[], FoodS& Food, int& Length)
+{
+
+    //DrawSnake
+    for (int i = 0; i < Length; i++)
+    {
+        if (Snake[0].y > GridHeight - 1 && i == 0) { continue; }
+        S2.setPosition(Snake[i].x * Pixel, Snake[i].y * Pixel);
+        window.draw(S2);
+    }
+
+    //DrawFood
+    S3.setPosition(Food.x * Pixel, Food.y * Pixel);
+    window.draw(S3);
+}
+
+//
+//Run
+//
+void Tick(SnakeC Snake[], FoodS& Food, int& Direction, int& Length, int& State)
 {
     //MovementSlithering
     for (int i = Length; i > 0; --i)
@@ -64,126 +209,6 @@ void Tick(SnakeC Snake[], FoodS Food, int& Direction, int& Length, int& State)
         if (Snake[0].x == Snake[i].x && Snake[0].y == Snake[i].y) { cout << "Game Over" << endl; State = 3; }
 }
 
-void DrawOSD(RenderWindow& window, Font& F1, Slug& Sl, Worm& Wo, Python& Py, int& Choice)
-{
-
-    Text CurrentScore;
-    CurrentScore.setFont(F1);
-    CurrentScore.setCharacterSize(GridWidth + GridHeight);
-    CurrentScore.setFillColor(Color(40, 42, 48));
-    CurrentScore.setStyle(Text::Bold);
-    CurrentScore.setPosition(!Width, Height);
-    if (Choice == 1) { CurrentScore.setString(to_string(Sl.GetCur())); }
-    else if (Choice == 2) { CurrentScore.setString(to_string(Wo.GetCur())); }
-    else if (Choice == 3) { CurrentScore.setString(to_string(Py.GetCur())); }
-
-    Text TopScore;
-    TopScore.setFont(F1);
-    TopScore.setCharacterSize(GridWidth + GridHeight);
-    TopScore.setFillColor(Color(40, 42, 48));
-    TopScore.setStyle(Text::Bold);
-    TopScore.setPosition(Width - (GridWidth + GridHeight) * 2, Height);
-    if (Choice == 1) { TopScore.setString(to_string(Sl.SlugTop())); }
-    else if (Choice == 2) { TopScore.setString(to_string(Wo.WormTop())); }
-    else if (Choice == 3) { TopScore.setString(to_string(Py.PythonTop())); }
-
-    Text GameMode;
-    GameMode.setFont(F1);
-    GameMode.setCharacterSize(GridWidth + GridHeight);
-    GameMode.setFillColor(Color(40, 42, 48));
-    GameMode.setStyle(Text::Bold);
-    GameMode.setPosition(Width / 2.5, Height);
-    if (Choice == 1) { GameMode.setString("Slug"); }
-    else if (Choice == 2) { GameMode.setString("Worm"); }
-    else if (Choice == 3) { GameMode.setString("Python"); }
-    
-
-    sf::RectangleShape Line(sf::Vector2f(300, 300));
-
-    Line.setSize(sf::Vector2f(Width, 4));
-    Line.setPosition(sf::Vector2f(0, Height));
-    Line.setFillColor(Color(40, 42, 48));
-
-    window.draw(CurrentScore);
-    window.draw(TopScore);
-    window.draw(GameMode);
-    window.draw(Line);
-}
-
-void DrawMenu(RenderWindow& window, Font& F1, float& Delay, int& Choice, int& Direction, int& State)
-{
-
-    Text Snake;
-    Snake.setFont(F1);
-    Snake.setCharacterSize((GridWidth + GridHeight) * 1.55);
-    Snake.setFillColor(Color(40, 42, 48));
-    Snake.setStyle(Text::Bold);
-    Snake.setString("Snake");
-    Snake.setPosition(Width / 3, Height / 8);
-
-    Text Slug;
-    Slug.setFont(F1);
-    Slug.setCharacterSize((GridWidth + GridHeight) * 0.65);
-    Slug.setFillColor(Color(40, 42, 48));
-    Slug.setStyle(Text::Bold);
-    Slug.setString("  W\nSlug");
-    Slug.setPosition(Width / 2.25, Height / 1.65);
-
-    Text Worm;
-    Worm.setFont(F1);
-    Worm.setCharacterSize((GridWidth + GridHeight) * 0.65);
-    Worm.setFillColor(Color(40, 42, 48));
-    Worm.setStyle(Text::Bold);
-    Worm.setString("   A\nWorm");
-    Worm.setPosition(Width / 4.5, Height / 1.15);
-
-    Text Python;
-    Python.setFont(F1);
-    Python.setCharacterSize((GridWidth + GridHeight) * 0.65);
-    Python.setFillColor(Color(40, 42, 48));
-    Python.setStyle(Text::Bold);
-    Python.setString("   D\nPython");
-    Python.setPosition(Width / 1.65, Height / 1.15);
-   
-    Text Exit;
-    Exit.setFont(F1);
-    Exit.setCharacterSize((GridWidth + GridHeight) * 0.65);
-    Exit.setFillColor(Color(40, 42, 48));
-    Exit.setStyle(Text::Bold);
-    Exit.setString("  S\nExit");
-    Exit.setPosition(Width / 2.25, Height / 1.15);
-
-    window.draw(Snake);
-    window.draw(Slug);
-    window.draw(Worm);
-    window.draw(Python);
-    window.draw(Exit);
-
-    if(State != 1)
-    {
-        if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W)){ 
-            Delay = 0.15; Choice = 1; Direction = 3; State = 1; }
-        else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A)){ 
-            Delay = 0.10; Choice = 2; Direction = 0; State = 1;}
-        else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D)){ 
-            Delay = 0.05; Choice = 3; Direction = 2; State = 1;}
-        else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
-            window.close();
-    }
-}
-
-void DrawGameOver(RenderWindow& window, Font& F1)
-{
-    Text GameOver;
-    GameOver.setFont(F1);
-    GameOver.setCharacterSize(GridWidth + GridHeight);
-    GameOver.setFillColor(Color::Red);
-    GameOver.setStyle(Text::Bold);
-    GameOver.setString("Game\nOver");
-    GameOver.setPosition(Width / 2.55, Height / 3);
-    window.draw(GameOver);
-}
-
 void RunGame(RenderWindow& window, Clock& GameClock, SnakeC Snake[], FoodS& Food, int& Length, int& State, float& Timer, float& Delay, int& Direction)
 {
     //TimeCheck
@@ -206,33 +231,9 @@ void RunGame(RenderWindow& window, Clock& GameClock, SnakeC Snake[], FoodS& Food
             Direction = 1;
 
     //DelayCheck
-    if (Timer > Delay) {Timer = 0; Tick(Snake, Food, Direction, Length, State); }
- 
+    if (Timer > Delay) { Timer = 0; Tick(Snake, Food, Direction, Length, State); }
+
 }
-
-void DrawGame(RenderWindow& window, Sprite& S1, Sprite& S2, Sprite& S3, SnakeC Snake[], FoodS& Food, int& Length)
-{
-
-    //DrawSnake
-    for (int i = 0; i < Length; i++)
-    {
-        if (Snake[0].y > GridHeight - 1 && i == 0) { continue; }
-        S2.setPosition(Snake[i].x * Pixel, Snake[i].y * Pixel);
-        window.draw(S2);
-    }
-
-    //DrawFood
-    S3.setPosition(Food.x * Pixel, Food.y * Pixel); 
-    window.draw(S3);
-}
-
-//void PauseCheck()
-//{
-//    //Pause
-//    if (Keyboard::isKeyPressed(Keyboard::P)) { cout << "Pause" << endl; Pause = !Pause; }
-//    if (Pause == true) { State = 2; }
-//    else { State = 1; }
-//}
 
 void Spawn(SnakeC Snake[], FoodS& Food, int& Length)
 {
@@ -251,6 +252,15 @@ void Spawn(SnakeC Snake[], FoodS& Food, int& Length)
     Food.y = GridHeight / 4;
 }
 
+//void PauseCheck()
+//{
+//    //Pause
+//    if (Keyboard::isKeyPressed(Keyboard::P)) { cout << "Pause" << endl; Pause = !Pause; }
+//    if (Pause == true) { State = 2; }
+//    else { State = 1; }
+//}
+
+
 int main()
 {
     
@@ -259,7 +269,6 @@ int main()
 
     //Window
     RenderWindow window(VideoMode(Width, Height + Pixel * 3), "Snake");
-
 
     //LoadTextures
     Texture T1, T2, T3;
@@ -272,7 +281,7 @@ int main()
     Sprite S2(T2);
     Sprite S3(T3);
 
-    //
+    //Variables
     Clock GameClock;
     float Timer = 0, Delay;
     bool GameOver = false;
@@ -301,9 +310,7 @@ int main()
             if (e.type == Event::Closed)
                 window.close();
         }
-        //window.clear(Color(117, 142, 41, 0));
         window.clear(Color(95, 139, 66, 0));
-        //window.clear(Color(83, 137, 48, 0));
         if (State == 0)//MenuState
         {
             DrawMenu(window, F1, Delay, Choice, Direction, State);
@@ -348,6 +355,7 @@ int main()
     }  
     return 0;
 }
+
 //Add Menu +
 //Add Pause +-
 //Add GameOver +

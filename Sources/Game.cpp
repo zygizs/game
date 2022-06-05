@@ -5,8 +5,6 @@
 
 using namespace std; 
 
-
-
 void Score::Read()
 {
     ifstream ScoreStorage("ScoreStorage.txt");
