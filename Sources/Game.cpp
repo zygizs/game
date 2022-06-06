@@ -28,9 +28,9 @@ int Score::GetCur()
     return CurScore;
 }
 
-void Slug::SlugScore(int& Length)
+void Slug::SlugScore(SnakeC Snake[])
 {
-    CurScore = 25 * (Length - DefaultLength);
+    CurScore = 25 * (Snake->Length - DefaultLength);
     if (CurScore > StoredScore[0])
         StoredScore[0] = CurScore;
 }
@@ -39,9 +39,9 @@ int Slug::SlugTop()
     return StoredScore[0];
 }
 
-void Worm::WormScore(int& Length)
+void Worm::WormScore(SnakeC Snake[])
 {
-    CurScore = 50 * (Length - DefaultLength);
+    CurScore = 50 * (Snake->Length - DefaultLength);
     if (CurScore > StoredScore[1])
         StoredScore[1] = CurScore;
 }
@@ -50,9 +50,9 @@ int Worm::WormTop()
     return StoredScore[1];
 }
 
-void Python::PythonScore(int& Length)
+void Python::PythonScore(SnakeC Snake[])
 {
-    CurScore = 75 * (Length - DefaultLength);
+    CurScore = 75 * (Snake->Length - DefaultLength);
     if (CurScore > StoredScore[2])
         StoredScore[2] = CurScore;
 }

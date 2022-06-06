@@ -14,6 +14,9 @@ public:
 };
 class SnakeC :public CordC
 {
+public:
+    int Length;
+    int Direction;
 };
 
 struct FoodS :public CordC
@@ -36,18 +39,18 @@ public:
 class Slug :public Score
 {
 public:
-    void SlugScore(int& Length);
+    void SlugScore(SnakeC Snake[]);
     int SlugTop();
 };
 class Worm :public Score
 {
 public:
-    void WormScore(int& Length);
+    void WormScore(SnakeC Snake[]);
     int WormTop();
 };
 class Python :public Score
 {
 public:
-    void PythonScore(int& Length);
+    void PythonScore(SnakeC Snake[]);
     int PythonTop();
 };
