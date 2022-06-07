@@ -75,7 +75,7 @@ void DrawMenu(RenderWindow& window, Font& F1, float& Delay, int& Choice, int& St
     }
 }
 
-void DrawOSD(RenderWindow& window, Font& F1, Slug& Sl, Worm& Wo, Python& Py, int& Choice)
+void DrawOSD(RenderWindow& window, Font& F1, Slug& Sl, Worm& Wo, Python& Py, int& Choice, SnakeC Snake[])
 {
 
     Text CurrentScore;
@@ -84,9 +84,9 @@ void DrawOSD(RenderWindow& window, Font& F1, Slug& Sl, Worm& Wo, Python& Py, int
     CurrentScore.setFillColor(Color(40, 42, 48));
     CurrentScore.setStyle(Text::Bold);
     CurrentScore.setPosition(!Width, Height);
-    if (Choice == 1) { CurrentScore.setString(to_string(Sl.GetCur())); }
-    else if (Choice == 2) { CurrentScore.setString(to_string(Wo.GetCur())); }
-    else if (Choice == 3) { CurrentScore.setString(to_string(Py.GetCur())); }
+    if (Choice == 1) { CurrentScore.setString(to_string(Sl.CurrentScore(Snake))); }
+    else if (Choice == 2) { CurrentScore.setString(to_string(Wo.CurrentScore(Snake))); }
+    else if (Choice == 3) { CurrentScore.setString(to_string(Py.CurrentScore(Snake))); }
 
     Text TopScore;
     TopScore.setFont(F1);
@@ -94,9 +94,9 @@ void DrawOSD(RenderWindow& window, Font& F1, Slug& Sl, Worm& Wo, Python& Py, int
     TopScore.setFillColor(Color(40, 42, 48));
     TopScore.setStyle(Text::Bold);
     TopScore.setPosition(Width - (GridWidth + GridHeight) * 2, Height);
-    if (Choice == 1) { TopScore.setString(to_string(Sl.SlugTop())); }
-    else if (Choice == 2) { TopScore.setString(to_string(Wo.WormTop())); }
-    else if (Choice == 3) { TopScore.setString(to_string(Py.PythonTop())); }
+    if (Choice == 1) { TopScore.setString(to_string(Sl.TopScore())); }
+    else if (Choice == 2) { TopScore.setString(to_string(Wo.TopScore())); }
+    else if (Choice == 3) { TopScore.setString(to_string(Py.TopScore())); }
 
     Text GameMode;
     GameMode.setFont(F1);
@@ -323,8 +323,8 @@ int main()
         {
             RunGame(GameWindow, GameClock, Snake, Food, State, Timer, Delay);
             DrawGame(GameWindow, S1, S2, S3, Snake, Food);
-            DrawOSD(GameWindow, F1, Sl, Wo, Py, Choice);
-            switch (Choice) { case 1: Sl.SlugScore(Snake); break; case 2: Wo.WormScore(Snake); break; case 3: Py.PythonScore(Snake); break; }
+            DrawOSD(GameWindow, F1, Sl, Wo, Py, Choice, Snake);
+            switch (Choice) { case 1: Sl.CurrentScore(Snake); break; case 2: Wo.CurrentScore(Snake); break; case 3: Py.CurrentScore(Snake); break; }
             //PauseCheck();
         }
         else if (State == 2)//PauseState
@@ -336,7 +336,7 @@ int main()
         { 
             DrawGame(GameWindow, S1, S2, S3, Snake, Food);
             DrawGameOver(GameWindow, F1);
-            DrawOSD(GameWindow, F1, Sl, Wo, Py, Choice);
+            DrawOSD(GameWindow, F1, Sl, Wo, Py, Choice, Snake);
             if (Keyboard::isKeyPressed(Keyboard::Enter))
             {
                 State = 0;

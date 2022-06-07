@@ -23,52 +23,39 @@ void Score::Write()
         cout << StoredScore[i];
     }
 }
-void Score::CurrentScore()
-{
-}
-void Score::TopScore()
-{
-    ofstream ScoreStorage("ScoreStorage.txt");
-    for (int i = 0; i < 3; i++)
-    {
-        ScoreStorage << StoredScore[i] << " ";
-        cout << StoredScore[i];
-    }
-}
-int Score::GetCur()
-{
-    return CurScore;
-}
 
-void Slug::SlugScore(SnakeC Snake[])
+int Slug::CurrentScore(SnakeC Snake[])
 {
-    CurScore = 25 * (Snake->Length - DefaultLength);
-    if (CurScore > StoredScore[0])
-        StoredScore[0] = CurScore;
+    CS = 25 * (Snake->Length - DefaultLength);
+    if (CS > StoredScore[0])
+        StoredScore[0] = CS;
+    return CS;
 }
-int Slug::SlugTop()
+int Slug::TopScore()
 {
     return StoredScore[0];
 }
 
-void Worm::WormScore(SnakeC Snake[])
+int Worm::CurrentScore(SnakeC Snake[])
 {
-    CurScore = 50 * (Snake->Length - DefaultLength);
-    if (CurScore > StoredScore[1])
-        StoredScore[1] = CurScore;
+    CS = 50 * (Snake->Length - DefaultLength);
+    if (CS > StoredScore[1])
+        StoredScore[1] = CS;
+    return CS;
 }
-int Worm::WormTop()
+int Worm::TopScore()
 {
     return StoredScore[1];
 }
 
-void Python::PythonScore(SnakeC Snake[])
+int Python::CurrentScore(SnakeC Snake[])
 {
-    CurScore = 75 * (Snake->Length - DefaultLength);
-    if (CurScore > StoredScore[2])
-        StoredScore[2] = CurScore;
+    CS = 75 * (Snake->Length - DefaultLength);
+    if (CS > StoredScore[2])
+        StoredScore[2] = CS;
+    return CS;
 }
-int Python::PythonTop()
+int Python::TopScore()
 {
     return StoredScore[2];
 }

@@ -12,53 +12,53 @@ class CordC
 public:
     int x, y;
 };
-class SnakeC :public CordC
+
+//class SnakeC :public CordC
+//{
+//public:
+//    int Length;
+//    int Direction;
+//};
+
+class SnakeC
 {
 public:
     int Length;
     int Direction;
+    CordC Snake[GridWidth * GridHeight];
 };
 
-class Snake
-{
-public:
-    int Length;
-    int Direction;
-    CordC mas[4];
-};
-
-struct FoodS :public CordC
-{    
-};
+struct FoodS :public CordC{};
 
 class Score
 {
 protected:
-    int CurScore;
-    int StoredScore[3];
+    int CS;
+    int StoredScore[3]; 
 
 public:
     Score() {}
     ~Score() {}
     void Read();
     void Write();
-    int GetCur();
+    /*virtual int CurrentScore() = 0;
+    virtual int TopScore() = 0;*/
 };
 class Slug :public Score
 {
 public:
-    void SlugScore(SnakeC Snake[]);
-    int SlugTop();
+    int CurrentScore(SnakeC Snake[]);
+    int TopScore();
 };
 class Worm :public Score
 {
 public:
-    void WormScore(SnakeC Snake[]);
-    int WormTop();
+    int CurrentScore(SnakeC Snake[]);
+    int TopScore();
 };
 class Python :public Score
 {
 public:
-    void PythonScore(SnakeC Snake[]);
-    int PythonTop();
+    int CurrentScore(SnakeC Snake[]);
+    int TopScore();
 };
