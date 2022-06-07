@@ -162,7 +162,7 @@ void Tick(SnakeC Snake[], FoodS& Food, int& State)
     cout << Snake->Direction << endl;
 
     //MovementChangeDirection
-    if (Snake->Direction == 0) Snake[0].x -= 1;
+    if (Snake[0].Direction == 0) Snake[0].x -= 1;
     if (Snake->Direction == 1) Snake[0].y += 1;
     if (Snake->Direction == 2) Snake[0].x += 1;
     if (Snake->Direction == 3) Snake[0].y -= 1;
@@ -359,3 +359,4 @@ int main()
 //Add Custom game mode "Food Placer" based on the old project -
 //Add Highscore system +
 //Add OSD for current game mode, highscore +
+

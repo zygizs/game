@@ -23,6 +23,18 @@ void Score::Write()
         cout << StoredScore[i];
     }
 }
+void Score::CurrentScore()
+{
+}
+void Score::TopScore()
+{
+    ofstream ScoreStorage("ScoreStorage.txt");
+    for (int i = 0; i < 3; i++)
+    {
+        ScoreStorage << StoredScore[i] << " ";
+        cout << StoredScore[i];
+    }
+}
 int Score::GetCur()
 {
     return CurScore;

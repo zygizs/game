@@ -19,6 +19,14 @@ public:
     int Direction;
 };
 
+class Snake
+{
+public:
+    int Length;
+    int Direction;
+    CordC mas[4];
+};
+
 struct FoodS :public CordC
 {    
 };
