@@ -2,6 +2,11 @@
 
 _Course work for objective programming subject, made to meet certain requirements._
 
+**About:**
+
+Simple snake game, based on the original, with retro inspired looks. \
+Includes 3 game modes: "Worm", "Slug" and "Python" all having different speeds, scores. 
+
 **Personal goals for the project:**
 
 - Menu **+**
