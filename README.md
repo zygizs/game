@@ -24,7 +24,9 @@ Includes 3 game modes: "Worm", "Slug" and "Python" all having different speeds, 
 _"+" is completed, " - " is not._
 
 **Personal thoughts on the project:**
-The project could be improved upon, but because it was made to meet certain requirements it would rather be rebuilt from the ground up. Time to move on to bigger projects.
+
+The project could be improved upon, but because it was made to meet certain requirements it would rather be rebuilt from the ground up. \
+Time to move on to bigger projects.
 
 
 
