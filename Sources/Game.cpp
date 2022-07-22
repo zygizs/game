@@ -5,57 +5,79 @@
 
 using namespace std; 
 
-void Score::Read()
+//FoodRandomSpawn
+void FoodS::operator ++(int)
+{
+    F.x = rand() % GridWidth;
+    F.y = rand() % GridHeight;
+};
+
+//ScoreC
+ScoreC::ScoreC(): StoredScore{}
+{
+    Temp = 0;
+    Error = 0;
+}
+
+//ReadScore
+void ScoreC::Read() 
 {
     ifstream ScoreStorage("ScoreStorage.txt");
     for (int i = 0; i < 3; i++)
     {
         ScoreStorage >> StoredScore[i];
-        cout << StoredScore[i];
     }
 }
-void Score::Write()
+
+//WriteScore
+void ScoreC::Write() 
 {
     ofstream ScoreStorage("ScoreStorage.txt");
     for (int i = 0; i < 3; i++)
     {
         ScoreStorage << StoredScore[i] << " ";
-        cout << StoredScore[i];
     }
 }
 
-int Slug::CurrentScore(SnakeC Snake[])
+//SlugDerived
+int SlugDC::CurrentScore(SnakeC Snake)
 {
-    CS = 25 * (Snake->Length - DefaultLength);
-    if (CS > StoredScore[0])
-        StoredScore[0] = CS;
-    return CS;
+    Temp = Go(Snake.Length, DefaultLength, 9999, GridWidth, GridHeight);
+    Temp *= 0.75;
+    if (Temp > StoredScore[0])
+        StoredScore[0] = Temp;
+  
+    return Temp;
 }
-int Slug::TopScore()
+int SlugDC::TopScore()
 {
     return StoredScore[0];
 }
 
-int Worm::CurrentScore(SnakeC Snake[])
+//WormDerived
+int WormDC::CurrentScore(SnakeC Snake)
 {
-    CS = 50 * (Snake->Length - DefaultLength);
-    if (CS > StoredScore[1])
-        StoredScore[1] = CS;
-    return CS;
+    Temp = Go(Snake.Length, DefaultLength, 9999, GridWidth, GridHeight);
+    Temp *= 0.95;
+    if (Temp > StoredScore[1])
+        StoredScore[1] = Temp;
+    return Temp;
 }
-int Worm::TopScore()
+int WormDC::TopScore()
 {
     return StoredScore[1];
 }
 
-int Python::CurrentScore(SnakeC Snake[])
+//PythonDerived
+int PythonDC::CurrentScore(SnakeC Snake)
 {
-    CS = 75 * (Snake->Length - DefaultLength);
-    if (CS > StoredScore[2])
-        StoredScore[2] = CS;
-    return CS;
+    Temp = Go(Snake.Length, DefaultLength, 9999, GridWidth, GridHeight);
+    Temp *= 1.25;
+    if (Temp > StoredScore[2])
+        StoredScore[2] = Temp;
+    return Temp;
 }
-int Python::TopScore()
+int PythonDC::TopScore()
 {
     return StoredScore[2];
 }
